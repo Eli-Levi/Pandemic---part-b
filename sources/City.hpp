@@ -2,7 +2,7 @@
 #include <string>
 namespace pandemic
 {
-    enum class City
+    enum City
     {
         // blue cities
         SanFrancisco,

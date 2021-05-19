@@ -14,7 +14,7 @@ namespace pandemic
         City current_pos;
         std::string player_role;
         std::set<City> hand;
-        void making_the_cure(Color color_name);
+        void making_the_cure(Color color_name, int num_of_cards_used);
         void remove_disease_cubes(City city_name);
 
     public:
@@ -22,8 +22,8 @@ namespace pandemic
         //virtual ~Player();
         virtual Player& drive(City city_name);
         virtual Player &fly_direct(City city_name);
-        Player& fly_charter(City city_name);
-        Player& fly_shuttle(City city_name);
+        virtual Player& fly_charter(City city_name);
+        virtual Player& fly_shuttle(City city_name);
         virtual Player& build();
         virtual Player& discover_cure(Color color_name);
         virtual Player& treat(City city_name);

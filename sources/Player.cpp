@@ -1,6 +1,7 @@
 #include "City.hpp"
 #include "Player.hpp"
 #include "Board.hpp"
+#include <iostream>
 #include "Color.hpp"
 
 using namespace std;
@@ -17,7 +18,7 @@ namespace pandemic
         }
         if (!board_copy.is_neighbors(current_pos, city_name))
         {
-            throw __throw_invalid_argument;
+            throw "can't drive to unconnected cities";
         }
         current_pos = city_name;
         return *this;
@@ -27,7 +28,7 @@ namespace pandemic
     {
         if (hand.count(city_name) != 1)
         {
-            throw __throw_invalid_argument;
+            throw "can't fly without proper card at hand";
         }
         current_pos = city_name;
         hand.erase(city_name);
@@ -47,13 +48,16 @@ namespace pandemic
 
     Player &Player::fly_shuttle(City city_name)
     {
+        if (current_pos == city_name)
+        {
+            throw "cant fly to same city!";
+        }
         if (board_copy.get_research_station(current_pos) && board_copy.get_research_station(city_name))
         {
             current_pos = city_name;
-            hand.erase(current_pos);
             return *this;
         }
-        throw __throw_invalid_argument;
+        throw "need a research station";
     }
 
     Player &Player::build()
@@ -65,7 +69,7 @@ namespace pandemic
         }
         else if (hand.count(this->current_pos) != 1)
         {
-            throw __throw_invalid_argument;
+            throw "you need the corrosponding card at hand!";
         }
         return *this;
     }
@@ -80,38 +84,41 @@ namespace pandemic
         {
             throw "you need a research station to discover a cure";
         }
-        making_the_cure(color_name);
+        making_the_cure(color_name, NUM_OF_CARDS_CURE);
         return *this;
     }
 
-    void Player::making_the_cure(Color color_name)
+    void Player::making_the_cure(Color color_name, int num_of_cards_used)
     {
         int num_of_color_at_hand = 0;
         std::set<City> cards_to_del;
-        unsigned long index = 0;
         for (City city : hand)
         {
             if (board_copy.city_color[city] == color_name)
             {
                 ++num_of_color_at_hand;
                 cards_to_del.insert(city);
-                ++index;
             }
         }
-        if (num_of_color_at_hand >= NUM_OF_CARDS_CURE)
+        if (num_of_color_at_hand >= num_of_cards_used)
         {
             board_copy.cured.at((unsigned long)color_name) = true;
-            std::set<City>::iterator curr = cards_to_del.begin();
-            while (curr != cards_to_del.end())
+            int count = NUM_OF_CARDS_CURE;
+            for (auto city : cards_to_del)
             {
-                hand.erase(*curr);
+                if (count == 0)
+                {
+                    break;
+                }
+                hand.erase(city);
+                --count;
             }
         }
     }
 
     Player &Player::treat(City city_name)
     {
-        if(current_pos != city_name)
+        if (current_pos != city_name)
         {
             throw "treat needs to be in your current city!";
         }
@@ -128,6 +135,7 @@ namespace pandemic
         if (board_copy.cured.at((unsigned long)board_copy.city_color[city_name]))
         {
             board_copy.disease_cube_num.at((unsigned long)city_name) = 0;
+            return;
         }
         board_copy.disease_cube_num.at((unsigned long)city_name) -= 1;
     }

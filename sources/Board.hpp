@@ -19,8 +19,8 @@ namespace pandemic
         std::map<City, std::set<City>> neighbors_list;
         std::map<City, Color> city_color;
         std::array<bool, NUM_OF_DISEASES> cured;
-        std::map<City, bool> research_stations;
-        //std::array<bool, TOTAL_NUM_CITIES> research_stations;
+        //std::map<City, bool> research_stations;
+        std::array<bool, TOTAL_NUM_CITIES> research_stations;
         std::array<int, TOTAL_NUM_CITIES> disease_cube_num;
 
     public:
@@ -34,11 +34,13 @@ namespace pandemic
 
         bool is_clean();
         void remove_cures();
+        void remove_stations();
 
         //assisters
         bool is_neighbors(City curr, City move_to);
 
-        bool get_research_station(City name) { return research_stations[name]; }
+        bool get_research_station(City name) { 
+            return research_stations.at((unsigned long)name); }
 
         Color get_city_color(City name) { return city_color[name]; }
 
@@ -50,5 +52,6 @@ namespace pandemic
         friend class OperationsExpert;
         friend class Researcher;
         friend class Scientist;
+        friend class GeneSplicer;
     };
 };

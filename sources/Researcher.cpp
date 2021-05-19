@@ -10,7 +10,7 @@ namespace pandemic
         {
             throw "not enough cards at hand";
         }
-        making_the_cure(color_name);
+        making_the_cure(color_name, NUM_OF_CARDS_CURE);
         return *this;
     }
 };

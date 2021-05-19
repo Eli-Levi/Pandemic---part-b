@@ -8,10 +8,16 @@ namespace pandemic
     {
         public:
 
-        Medic(Board board, City start): Player(board, start, "Medic"){};
+        Medic(Board& board, City start): Player(board, start, "Medic"){};
 
         virtual Player& drive(City city_name) override;
 
         virtual Player& treat(City city_name) override;
+
+        virtual Player &fly_direct(City city_name) override;
+
+        virtual Player& fly_charter(City city_name) override;
+        
+        virtual Player& fly_shuttle(City city_name) override;
     };
 };
