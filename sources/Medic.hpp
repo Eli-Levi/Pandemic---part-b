@@ -6,6 +6,8 @@ namespace pandemic
 {
     class Medic : public Player
     {
+        void treat_by_move();
+
         public:
 
         Medic(Board& board, City start): Player(board, start, "Medic"){};

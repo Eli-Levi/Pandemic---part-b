@@ -4,7 +4,7 @@ namespace pandemic
 {
     Player &OperationsExpert::build()
     {
-        board_copy.research_stations.at(current_pos) = true;
+        board.add_research_station(current_pos);
         return *this;
     }
 };

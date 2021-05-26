@@ -12,15 +12,11 @@ namespace pandemic
 {
     Player &Player::drive(City city_name)
     {
-        if (city_name == current_pos)
-        {
-            throw "must move to a new city!";
-        }
-        if (!board_copy.is_neighbors(current_pos, city_name))
+        if (!board.is_neighbors(current_pos, city_name))
         {
             throw "can't drive to unconnected cities";
         }
-        current_pos = city_name;
+        move_to_city(city_name);
         return *this;
     }
 
@@ -30,7 +26,7 @@ namespace pandemic
         {
             throw "can't fly without proper card at hand";
         }
-        current_pos = city_name;
+        move_to_city(city_name);
         hand.erase(city_name);
         return *this;
     }
@@ -39,37 +35,42 @@ namespace pandemic
     {
         if (hand.count(current_pos) != 1)
         {
-            throw __throw_invalid_argument;
+            throw "can't fly without card in hand";
         }
+        move_to_city(city_name);
         hand.erase(current_pos);
-        current_pos = city_name;
         return *this;
     }
 
     Player &Player::fly_shuttle(City city_name)
     {
-        if (current_pos == city_name)
+        if (!board.get_research_station(current_pos) || !board.get_research_station(city_name))
         {
-            throw "cant fly to same city!";
+            throw "need a research station";
         }
-        if (board_copy.get_research_station(current_pos) && board_copy.get_research_station(city_name))
+        move_to_city(city_name);
+        return *this;
+    }
+
+    void Player::move_to_city(City city)
+    {
+        if (current_pos == city)
         {
-            current_pos = city_name;
-            return *this;
+            throw "can't move to same city";
         }
-        throw "need a research station";
+        current_pos = city;
     }
 
     Player &Player::build()
     {
-        if (!board_copy.get_research_station(this->current_pos) && hand.count(this->current_pos) == 1)
-        {
-            board_copy.research_stations.at(current_pos) = true;
-            hand.erase(current_pos);
-        }
-        else if (hand.count(this->current_pos) != 1)
+        if (hand.count(this->current_pos) != 1)
         {
             throw "you need the corrosponding card at hand!";
+        }
+        if (!board.get_research_station(current_pos) && hand.count(current_pos) == 1)
+        {
+            board.add_research_station(current_pos);
+            hand.erase(current_pos);
         }
         return *this;
     }
@@ -80,7 +81,7 @@ namespace pandemic
         {
             throw "not enough cards at hand";
         }
-        if (!board_copy.get_research_station(current_pos))
+        if (!board.get_research_station(current_pos))
         {
             throw "you need a research station to discover a cure";
         }
@@ -90,20 +91,18 @@ namespace pandemic
 
     void Player::making_the_cure(Color color_name, int num_of_cards_used)
     {
-        int num_of_color_at_hand = 0;
         std::set<City> cards_to_del;
         for (City city : hand)
         {
-            if (board_copy.city_color[city] == color_name)
+            if (board.get_city_color(city) == color_name)
             {
-                ++num_of_color_at_hand;
                 cards_to_del.insert(city);
             }
         }
-        if (num_of_color_at_hand >= num_of_cards_used)
+        if (cards_to_del.size() >= num_of_cards_used)
         {
-            board_copy.cured.at((unsigned long)color_name) = true;
-            int count = NUM_OF_CARDS_CURE;
+            board.cure_disease(color_name);
+            int count = num_of_cards_used;
             for (auto city : cards_to_del)
             {
                 if (count == 0)
@@ -128,16 +127,16 @@ namespace pandemic
 
     void Player::remove_disease_cubes(City city_name)
     {
-        if (board_copy.disease_cube_num.at((unsigned long)city_name) == 0)
+        if (board[city_name] == 0)
         {
             throw "can't reduce disease cubes below 0!";
         }
-        if (board_copy.cured.at((unsigned long)board_copy.city_color[city_name]))
+        if (board.get_cured(board.get_city_color(city_name)))
         {
-            board_copy.disease_cube_num.at((unsigned long)city_name) = 0;
+            board[city_name] = 0;
             return;
         }
-        board_copy.disease_cube_num.at((unsigned long)city_name) -= 1;
+        board[city_name] -= 1;
     }
 
     std::string Player::role() const

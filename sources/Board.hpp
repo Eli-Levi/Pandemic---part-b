@@ -4,6 +4,7 @@
 #include "City.hpp"
 #include <ostream>
 #include <set>
+#include <algorithm>
 #include "Color.hpp"
 
 const unsigned int TOTAL_NUM_CITIES = 48;
@@ -42,16 +43,13 @@ namespace pandemic
         bool get_research_station(City name) { 
             return research_stations.at((unsigned long)name); }
 
+        void add_research_station(City city){research_stations.at(city) = true;}
+
         Color get_city_color(City name) { return city_color[name]; }
 
-        const std::array<bool, NUM_OF_DISEASES> &get_cured() { return cured; }
+        const bool get_cured(Color color) { return cured.at((unsigned long)color); }
 
-        friend class Player;
-        friend class FieldDoctor;
-        friend class Medic;
-        friend class OperationsExpert;
-        friend class Researcher;
-        friend class Scientist;
-        friend class GeneSplicer;
+        void cure_disease(Color color){ cured.at((unsigned long)color) = true;}
+        
     };
 };

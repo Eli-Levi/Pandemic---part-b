@@ -2,19 +2,16 @@
 
 namespace pandemic
 {
-    Player& Dispatcher::fly_direct(City city_name)
+    Player &Dispatcher::fly_direct(City city_name)
     {
-        if (current_pos == city_name)
+        if (!board.get_research_station(current_pos))
         {
-            throw " can't fly to same city";
+            Player::fly_direct(city_name);
         }
-        
-        if(board_copy.get_research_station(current_pos))
+        else
         {
-            current_pos = city_name;
-            return *this;
+            move_to_city(city_name);
         }
-        return Player::fly_direct(city_name);
-
+        return *this;
     }
 };
