@@ -12,7 +12,7 @@ namespace pandemic
         protected:
         Board& board;
 
-        City current_pos;
+        City& current_pos;
 
         std::string player_role;
 
@@ -26,7 +26,7 @@ namespace pandemic
 
     public:
         Player(Board& board, City city_start = City::Atlanta, std::string role = "Player"): board(board), current_pos(city_start), player_role(role){};
-        //virtual ~Player();
+
         virtual Player& drive(City city_name);
 
         virtual Player &fly_direct(City city_name);

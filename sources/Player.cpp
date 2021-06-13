@@ -37,8 +37,9 @@ namespace pandemic
         {
             throw "can't fly without card in hand";
         }
+        auto temp = current_pos;
         move_to_city(city_name);
-        hand.erase(current_pos);
+        hand.erase(temp);
         return *this;
     }
 

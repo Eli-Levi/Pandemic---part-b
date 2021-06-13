@@ -20,7 +20,6 @@ namespace pandemic
         std::map<City, std::set<City>> neighbors_list;
         std::map<City, Color> city_color;
         std::array<bool, NUM_OF_DISEASES> cured;
-        //std::map<City, bool> research_stations;
         std::array<bool, TOTAL_NUM_CITIES> research_stations;
         std::array<int, TOTAL_NUM_CITIES> disease_cube_num;
 
@@ -37,17 +36,17 @@ namespace pandemic
         void remove_cures();
         void remove_stations();
 
-        //assisters
+        // getters and setters
         bool is_neighbors(City curr, City move_to);
 
         bool get_research_station(City name) { 
-            return research_stations.at((unsigned long)name); }
+            return research_stations.at((unsigned long)name); } const
 
         void add_research_station(City city){research_stations.at(city) = true;}
 
-        Color get_city_color(City name) { return city_color[name]; }
+        Color get_city_color(City name) { return city_color[name]; } const
 
-        const bool get_cured(Color color) { return cured.at((unsigned long)color); }
+        bool get_cured(Color color) { return cured.at((unsigned long)color); } const
 
         void cure_disease(Color color){ cured.at((unsigned long)color) = true;}
         

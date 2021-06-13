@@ -1,4 +1,5 @@
 #include "GeneSplicer.hpp"
+using namespace std;
 
 const int NUM_OF_CARDS_CURE = 5;
 
@@ -8,16 +9,24 @@ namespace pandemic
     {
         if (hand.size() < NUM_OF_CARDS_CURE)
         {
-            throw "not enough cards at hand";
+            string explain = "not enough cards at hand";
+            throw invalid_argument(explain);
         }
         if (!board.get_research_station(current_pos))
         {
-            throw "you need a research station to discover a cure";
+            string explain = "Need a research station at current city!";
+            throw invalid_argument(explain);
         }
         board.cure_disease(color_name);
-        for (unsigned long i = 0; i < NUM_OF_CARDS_CURE; i++)
+        set<City> discard ;
+        auto it = hand.begin();
+        for (int i = 0; i < NUM_OF_CARDS_CURE; ++i) {
+            discard.insert(discard.end(),(*it));
+            it++;
+        }
+        for (auto c: discard)
         {
-            hand.erase(*(hand.begin()));
+            hand.erase(c);
         }
         return *this;
     }
